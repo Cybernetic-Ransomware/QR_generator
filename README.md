@@ -38,7 +38,10 @@ minikube tunnel
 #### Checks:
 
 ```powershell
-kubectl get pods      
-kubectl get pods     
-docker images   
+kubectl get pods       
+docker images
 ```
+
+#### Default run:
+
+http://127.0.0.1:5000/
