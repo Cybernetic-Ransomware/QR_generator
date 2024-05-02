@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qrgen
+  labels:
+    app: qrgen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qrgen
+  template:
+    metadata:
+      name: qrgen
+      labels:
+        app: qrgen
+    spec:
+      containers:
+        - name: qrgen
+          image: qr_generator-web:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+      restartPolicy: Always
