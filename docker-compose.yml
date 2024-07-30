@@ -6,4 +6,3 @@ services:
       - "5000:5000"
     volumes:
       - .:/app
-      - /app/*.tar:/app/.ignore
