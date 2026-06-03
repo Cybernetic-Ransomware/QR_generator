@@ -11,12 +11,12 @@
     <div class="col-lg-6">
 
     <h1>QR Code Generated</h1>
-    <img src="/download" alt="QR Code"><br>
-    <a href="/download">Download QR Code without Image</a><br>
+    <img src="{{ url_for('download', id=token) }}" alt="QR Code"><br>
+    <a href="{{ url_for('download', id=token) }}">Download QR Code without Image</a><br>
 
     {% if qr_with_image_exists %}
-    <img src="/download_with_image" alt=""><br>
-    <a href="/download_with_image">Download QR Code with Image</a><br>
+    <img src="{{ url_for('download_with_image', id=token) }}" alt="QR Code with background"><br>
+    <a href="{{ url_for('download_with_image', id=token) }}">Download QR Code with Image</a><br>
     {% endif %}
 
     <br>

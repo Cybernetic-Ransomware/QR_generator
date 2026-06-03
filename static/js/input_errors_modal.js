@@ -12,7 +12,7 @@ $(document).ready(function(){
             contentType: false,
             success: function(response) {
                 if (response.success) {
-                    window.location.href = '/result';
+                    window.location.href = '/result?id=' + encodeURIComponent(response.id);
                 } else {
                     $('#errorModalBody').empty();
                     response.errors.forEach(function(error) {

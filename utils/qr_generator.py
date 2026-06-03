@@ -1,3 +1,5 @@
+import io
+
 import segno
 
 from utils.mixins import NotificationMixin
@@ -5,21 +7,39 @@ from werkzeug.datastructures import FileStorage
 
 
 class QRCodeGenerator(NotificationMixin):
-    def generate_qr(self, text: str, size: int, image: FileStorage | None, color: str | None = None) -> (bool, str):
-        valid, errors = self.validate_data(text, size, image)
+    def __init__(self) -> None:
+        self.qr_png: bytes | None = None
+        self.artistic_png: bytes | None = None
+        self.artistic_ext: str | None = None
 
+    def generate_qr(
+        self,
+        text: str,
+        size: int,
+        image: FileStorage | None,
+        color: str | None = None,
+    ) -> tuple[bool, list[str]]:
+        valid, errors = self.validate_data(text, size, image)
         if not valid:
             return False, errors
 
         qr = segno.make(text)
-        extension = "png" if (extension := image.filename.split('.')[-1]) != "gif" else extension
 
+        buf = io.BytesIO()
         if color:
-            qr.save(f'qr.png', scale=size, dark=color, light='white')
+            qr.save(buf, kind='png', scale=size, dark=color, light='white')
         else:
-            qr.save(f'qr.png', scale=size)
+            qr.save(buf, kind='png', scale=size)
+        buf.seek(0)
+        self.qr_png = buf.read()
 
-        if image:
-            qr.to_artistic(background=image, target=f'qr_with_image.{extension}', scale=size)
+        if image and image.filename:
+            ext = 'gif' if image.filename.rsplit('.', 1)[-1].lower() == 'gif' else 'png'
+            image.seek(0)
+            art_buf = io.BytesIO()
+            qr.to_artistic(background=image, target=art_buf, kind=ext, scale=size)
+            art_buf.seek(0)
+            self.artistic_png = art_buf.read()
+            self.artistic_ext = ext
 
-        return True, ""
+        return True, []
