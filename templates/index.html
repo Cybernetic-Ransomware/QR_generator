@@ -17,6 +17,7 @@
 
     <h1>QR Code Generator</h1>
     <form id='generate-form' action="/generate" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label for="text">Text:</label><br>
         <input type="text" id="text" name="text"><br>
 

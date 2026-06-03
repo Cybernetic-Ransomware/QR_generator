@@ -1,4 +1,11 @@
 $(document).ready(function(){
+    function showErrors(errors) {
+        var $body = $('#errorModalBody').empty();
+        (errors && errors.length ? errors : ['An unexpected error occurred.'])
+            .forEach(function(error) { $('<p>').text(error).appendTo($body); });
+        $('#errorModal').modal('show');
+    }
+
     $('#generate-form').submit(function(event){
         event.preventDefault();
 
@@ -14,15 +21,16 @@ $(document).ready(function(){
                 if (response.success) {
                     window.location.href = '/result?id=' + encodeURIComponent(response.id);
                 } else {
-                    $('#errorModalBody').empty();
-                    response.errors.forEach(function(error) {
-                        $('#errorModalBody').append('<p>' + error + '</p>');
-                    });
-                    $('#errorModal').modal('show');
+                    showErrors(response.errors);
                 }
             },
-            error: function(xhr, status, error) {
+            error: function(xhr) {
                 console.error(xhr.responseText);
+                var errors = (xhr.responseJSON && xhr.responseJSON.errors) ? xhr.responseJSON.errors : null;
+                if (!errors && xhr.status === 413) {
+                    errors = ['File is too large. Maximum request size is 6 MB.'];
+                }
+                showErrors(errors);
             }
         });
     });

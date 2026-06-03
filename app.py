@@ -1,6 +1,10 @@
 import io
+import os
+import secrets
 
 from flask import Flask, abort, render_template, request, send_file, jsonify
+from flask_wtf import CSRFProtect
+from flask_wtf.csrf import CSRFError
 from utils.logger import AppLogger
 from utils.qr_generator import QRCodeGenerator
 from utils.result_store import ResultStore
@@ -9,7 +13,20 @@ from utils.result_store import ResultStore
 AppLogger.configure_logger()
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') or secrets.token_hex(32)
+app.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024  # 5 MB image + multipart headroom
+csrf = CSRFProtect(app)
 store = ResultStore()
+
+
+@app.errorhandler(413)
+def request_too_large(e):
+    return jsonify({'success': False, 'errors': ['File is too large. Maximum request size is 6 MB.']}), 413
+
+
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return jsonify({'success': False, 'errors': ['Security token missing or expired. Please reload the page.']}), 400
 
 
 @app.route('/')
@@ -83,4 +100,5 @@ def download_with_image():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    debug = os.getenv('FLASK_DEBUG', 'false').lower() == 'true'
+    app.run(debug=debug, host='0.0.0.0', port=5000)
