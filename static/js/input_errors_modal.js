@@ -1,37 +1,34 @@
-$(document).ready(function(){
+document.addEventListener('DOMContentLoaded', function () {
+    var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+
     function showErrors(errors) {
-        var $body = $('#errorModalBody').empty();
+        var body = document.getElementById('errorModalBody');
+        body.innerHTML = '';
         (errors && errors.length ? errors : ['An unexpected error occurred.'])
-            .forEach(function(error) { $('<p>').text(error).appendTo($body); });
-        $('#errorModal').modal('show');
+            .forEach(function (error) {
+                var p = document.createElement('p');
+                p.textContent = error;
+                body.appendChild(p);
+            });
+        errorModal.show();
     }
 
-    $('#generate-form').submit(function(event){
+    document.getElementById('generate-form').addEventListener('submit', function (event) {
         event.preventDefault();
 
-        var formData = new FormData($(this)[0]);
-
-        $.ajax({
-            type: 'POST',
-            url: '/generate',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                if (response.success) {
-                    window.location.href = '/result?id=' + encodeURIComponent(response.id);
-                } else {
-                    showErrors(response.errors);
-                }
-            },
-            error: function(xhr) {
-                console.error(xhr.responseText);
-                var errors = (xhr.responseJSON && xhr.responseJSON.errors) ? xhr.responseJSON.errors : null;
-                if (!errors && xhr.status === 413) {
-                    errors = ['File is too large. Maximum request size is 6 MB.'];
-                }
-                showErrors(errors);
-            }
-        });
+        fetch('/generate', { method: 'POST', body: new FormData(this) })
+            .then(function (response) {
+                return response.json().then(function (data) {
+                    if (data.success) {
+                        window.location.href = '/result?id=' + encodeURIComponent(data.id);
+                    } else {
+                        showErrors(data.errors);
+                    }
+                });
+            })
+            .catch(function (err) {
+                console.error(err);
+                showErrors(null);
+            });
     });
 });
