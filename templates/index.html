@@ -15,22 +15,32 @@
     <div class="row justify-content-center">
     <div class="col-lg-6">
 
-    <h1>QR Code Generator</h1>
+    <h1 class="my-4">QR Code Generator</h1>
     <form id='generate-form' action="/generate" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <label for="text">Text:</label><br>
-        <input type="text" id="text" name="text"><br>
 
-        <label for="size">Size:</label><br>
-        <input type="range" id="size" name="size" min="1" max="30" value="15"><br>
+        <div class="mb-3">
+            <label for="text" class="form-label">Text:</label>
+            <input type="text" id="text" name="text" class="form-control">
+        </div>
 
-        <label for="image">Image:</label><br>
-        <input type="file" id="image" name="image"><br>
-        <input type="button" value="Remove file" onclick="clearFileInput()"><br>
+        <div class="mb-3">
+            <label for="size" class="form-label">Size:</label>
+            <input type="range" id="size" name="size" min="1" max="30" value="15" class="form-range">
+        </div>
 
-        <label for="color">Color (RGB):</label><br>
-        <input type="color" id="color" name="color"><br>
-        <input type="submit" value="Generate">
+        <div class="mb-3">
+            <label for="image" class="form-label">Image:</label>
+            <input type="file" id="image" name="image" class="form-control">
+            <input type="button" class="btn btn-secondary btn-sm mt-2" value="Remove file" onclick="clearFileInput()">
+        </div>
+
+        <div class="mb-3">
+            <label for="color" class="form-label">Color (RGB):</label>
+            <input type="color" id="color" name="color" class="form-control form-control-color">
+        </div>
+
+        <input type="submit" class="btn btn-primary" value="Generate">
     </form>
 
 

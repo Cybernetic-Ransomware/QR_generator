@@ -14,17 +14,16 @@
     <div class="row justify-content-center">
     <div class="col-lg-6">
 
-    <h1>QR Code Generated</h1>
-    <img src="{{ url_for('download', id=token) }}" alt="QR Code"><br>
-    <a href="{{ url_for('download', id=token) }}" download>Download QR Code without Image</a><br>
+    <h1 class="my-4">QR Code Generated</h1>
+    <img src="{{ url_for('download', id=token) }}" alt="QR Code" class="img-fluid d-block mb-2">
+    <a href="{{ url_for('download', id=token) }}" download class="btn btn-primary mb-4 d-inline-block">Download QR Code without Image</a>
 
     {% if qr_with_image_exists %}
-    <img src="{{ url_for('download_with_image', id=token) }}" alt="QR Code with background"><br>
-    <a href="{{ url_for('download_with_image', id=token) }}" download>Download QR Code with Image</a><br>
+    <img src="{{ url_for('download_with_image', id=token) }}" alt="QR Code with background" class="img-fluid d-block mb-2">
+    <a href="{{ url_for('download_with_image', id=token) }}" download class="btn btn-primary mb-4 d-inline-block">Download QR Code with Image</a>
     {% endif %}
 
-    <br>
-    <a href="/">Back to previous page</a>
+    <a href="/" class="btn btn-outline-secondary d-block">Back to previous page</a>
 
     </div>
     </div>
