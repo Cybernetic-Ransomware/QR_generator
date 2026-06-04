@@ -6,7 +6,9 @@ services:
       - proxy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.qr.rule=Host(`qr.home`)
+      - traefik.docker.network=proxy
+      - traefik.http.routers.qr.rule=Host(`qrcode.home`)
+      - traefik.http.routers.qr.entrypoints=web
       - traefik.http.services.qr.loadbalancer.server.port=5000
 networks:
   proxy:
