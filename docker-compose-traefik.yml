@@ -8,9 +8,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.qr.rule=Host(`qr.home`)
       - traefik.http.services.qr.loadbalancer.server.port=5000
-    volumes:
-      - .:/app
-
 networks:
   proxy:
     external: true

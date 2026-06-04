@@ -39,29 +39,29 @@ test-unit:
 test-integration:
     uv run pytest -m integration -v
 
-# Start Docker services (build)
+# Start Docker services — dev (plain docker-compose)
 docker-up:
-    docker-compose up -d --build
+    docker compose up -d --build
 
-# Stop Docker services
+# Stop Docker services — dev
 docker-down:
-    docker-compose down
+    docker compose down
 
-# Start Docker services with Traefik (local)
+# Start Docker services with Traefik — local test
 docker-up-traefik:
-    docker-compose -f docker-compose-traefik.yml up -d --build
+    docker compose -f docker-compose-traefik.yml up -d --build
 
-# Stop Docker services with Traefik (local)
+# Stop Docker services with Traefik — local test
 docker-down-traefik:
-    docker-compose -f docker-compose-traefik.yml down
+    docker compose -f docker-compose-traefik.yml down
 
-# Deploy to home server: git pull + docker compose up
+# Deploy to home server: git pull + make up
 deploy:
-    ssh {{server}} "cd {{server_dir}} && git pull && docker compose -f docker-compose-traefik.yml up -d --build"
+    ssh {{server}} "cd {{server_dir}} && git pull && make up"
 
 # Stop deployment on home server
 deploy-down:
-    ssh {{server}} "cd {{server_dir}} && docker compose -f docker-compose-traefik.yml down"
+    ssh {{server}} "cd {{server_dir}} && make down"
 
 # Stream live logs from home server
 deploy-logs:
