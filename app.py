@@ -36,8 +36,11 @@ def index():
 
 @app.route('/generate', methods=['POST'])
 def generate():
-    text = request.form['text']
-    size = int(request.form['size'])
+    text = request.form.get('text', '')
+    try:
+        size = int(request.form.get('size', ''))
+    except (TypeError, ValueError):
+        return jsonify({'success': False, 'errors': ['Size must be a valid integer.']}), 400
     raw_image = request.files.get('image')
     image = raw_image if (raw_image and raw_image.filename) else None
     color = request.form.get('color') or None
