@@ -4,7 +4,7 @@ MIN_SIZE = 1
 MAX_SIZE = 30
 
 
-class NotificationMixin:
+class ValidationMixin:
     @staticmethod
     def validate_text(text: str) -> tuple[bool, str]:
         if len(text) > 55:

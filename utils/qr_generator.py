@@ -3,10 +3,10 @@ import io
 import segno
 from werkzeug.datastructures import FileStorage
 
-from utils.mixins import NotificationMixin
+from utils.mixins import ValidationMixin
 
 
-class QRCodeGenerator(NotificationMixin):
+class QRCodeGenerator(ValidationMixin):
     def __init__(self) -> None:
         self.qr_png: bytes | None = None
         self.artistic_png: bytes | None = None
@@ -27,8 +27,9 @@ class QRCodeGenerator(NotificationMixin):
 
         try:
             qr = segno.make(text, micro=True) if micro else segno.make_qr(text)
-        except Exception:
-            return False, ['Text is too long for a Micro QR code.']
+        except segno.DataOverflowError:
+            msg = 'Text is too long for a Micro QR code.' if micro else 'Text is too long for a QR code.'
+            return False, [msg]
 
         buf = io.BytesIO()
         qr.save(buf, kind='png', scale=size, dark=color or 'black', light=bg_color)

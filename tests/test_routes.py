@@ -1,13 +1,17 @@
 import io
 
+import pytest
+
 from app import store
 
 
+@pytest.mark.integration
 def test_index(client):
     response = client.get('/')
     assert response.status_code == 200
 
 
+@pytest.mark.integration
 class TestGenerate:
     def test_valid_text_and_size(self, client):
         response = client.post('/generate', data={'text': 'hello', 'size': '10'})
@@ -43,6 +47,7 @@ class TestGenerate:
         assert data['success'] is False
 
 
+@pytest.mark.integration
 class TestResult:
     def test_valid_token(self, client, qr_token):
         response = client.get(f'/result?id={qr_token}')
@@ -57,6 +62,7 @@ class TestResult:
         assert response.status_code == 404
 
 
+@pytest.mark.integration
 class TestDownload:
     def test_valid_token_returns_png(self, client, qr_token):
         response = client.get(f'/download?id={qr_token}')
@@ -72,6 +78,7 @@ class TestDownload:
         assert response.status_code == 404
 
 
+@pytest.mark.integration
 class TestDownloadWithImage:
     def test_token_without_artistic_returns_404(self, client, qr_token):
         response = client.get(f'/download_with_image?id={qr_token}')

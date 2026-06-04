@@ -1,10 +1,12 @@
 import io
 from unittest.mock import MagicMock
 
-from utils.mixins import MAX_SIZE, MIN_SIZE, NotificationMixin
+import pytest
+
+from utils.mixins import MAX_SIZE, MIN_SIZE, ValidationMixin
 
 
-class Validator(NotificationMixin):
+class Validator(ValidationMixin):
     pass
 
 
@@ -20,6 +22,7 @@ def _mock_file(data: bytes, filename: str = 'image.png'):
     return f
 
 
+@pytest.mark.unit
 class TestValidateText:
     def test_empty_string_is_valid(self):
         ok, msg = v.validate_text('')
@@ -36,6 +39,7 @@ class TestValidateText:
         assert '55' in msg
 
 
+@pytest.mark.unit
 class TestValidateSize:
     def test_min_boundary(self):
         ok, _ = v.validate_size(MIN_SIZE)
@@ -57,6 +61,7 @@ class TestValidateSize:
         assert str(MAX_SIZE) in msg
 
 
+@pytest.mark.unit
 class TestValidateImage:
     def test_none_is_valid(self):
         ok, msg = v.validate_image(None)
