@@ -2,13 +2,13 @@ import io
 import os
 import secrets
 
-from flask import Flask, abort, render_template, request, send_file, jsonify
+from flask import Flask, abort, jsonify, render_template, request, send_file
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import CSRFError
+
 from utils.logger import AppLogger
 from utils.qr_generator import QRCodeGenerator
 from utils.result_store import ResultStore
-
 
 AppLogger.configure_logger()
 
@@ -39,7 +39,7 @@ def generate():
     text = request.form.get('text', '')
     try:
         size = int(request.form.get('size', ''))
-    except (TypeError, ValueError):
+    except TypeError, ValueError:
         return jsonify({'success': False, 'errors': ['Size must be a valid integer.']}), 400
     raw_image = request.files.get('image')
     image = raw_image if (raw_image and raw_image.filename) else None
@@ -51,11 +51,13 @@ def generate():
     if not success:
         return jsonify({'success': False, 'errors': errors})
 
-    token = store.put({
-        'qr': generator.qr_png,
-        'artistic': generator.artistic_png,
-        'artistic_ext': generator.artistic_ext,
-    })
+    token = store.put(
+        {
+            'qr': generator.qr_png,
+            'artistic': generator.artistic_png,
+            'artistic_ext': generator.artistic_ext,
+        }
+    )
     return jsonify({'success': True, 'id': token})
 
 

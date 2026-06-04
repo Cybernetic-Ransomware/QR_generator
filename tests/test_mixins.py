@@ -1,7 +1,7 @@
 import io
 from unittest.mock import MagicMock
 
-from utils.mixins import NotificationMixin, MIN_SIZE, MAX_SIZE
+from utils.mixins import MAX_SIZE, MIN_SIZE, NotificationMixin
 
 
 class Validator(NotificationMixin):

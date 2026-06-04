@@ -3,7 +3,8 @@ import io
 
 import pytest
 
-from app import app as flask_app, store
+from app import app as flask_app
+from app import store
 
 
 @pytest.fixture
@@ -20,10 +21,7 @@ def client(app):
 
 @pytest.fixture
 def png_bytes():
-    return base64.b64decode(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQ'
-        'AABjkB6QAAAABJRU5ErkJggg=='
-    )
+    return base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQAABjkB6QAAAABJRU5ErkJggg==')
 
 
 @pytest.fixture

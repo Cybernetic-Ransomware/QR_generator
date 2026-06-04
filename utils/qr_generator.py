@@ -1,9 +1,9 @@
 import io
 
 import segno
+from werkzeug.datastructures import FileStorage
 
 from utils.mixins import NotificationMixin
-from werkzeug.datastructures import FileStorage
 
 
 class QRCodeGenerator(NotificationMixin):
