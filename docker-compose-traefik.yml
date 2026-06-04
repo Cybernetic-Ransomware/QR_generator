@@ -1,0 +1,15 @@
+services:
+  web:
+    build: .
+    container_name: qr_web
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.qr.rule=Host(`qrcode.home`)
+      - traefik.http.routers.qr.entrypoints=web
+      - traefik.http.services.qr.loadbalancer.server.port=5000
+networks:
+  proxy:
+    external: true

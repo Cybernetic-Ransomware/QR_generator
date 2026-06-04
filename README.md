@@ -14,6 +14,19 @@ The purpose of this project is to demonstrate how to integrate and test the Segn
 
 ## Getting Started:
 
+### Local development
+
+Requires [uv](https://docs.astral.sh/uv/) and [just](https://just.systems/).
+
+```powershell
+just install      # install all dependencies (including dev)
+just runserver    # start Flask on http://127.0.0.1:5000/
+just test         # run all tests (excluding slow)
+just lint         # ruff, ty, codespell, bandit
+just git-precommit  # run pre-commit hooks on all files
+```
+
+> **Note:** `docker-compose.yml` mounts the working directory into the container (`.:/app`) for development convenience. Remove or replace the `volumes` section before using it in production.
 
 ### Commands reminder:
 
@@ -38,7 +51,7 @@ minikube tunnel
 #### Checks:
 
 ```powershell
-kubectl get pods       
+kubectl get pods
 docker images
 ```
 

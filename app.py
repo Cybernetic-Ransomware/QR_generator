@@ -1,69 +1,111 @@
+import io
 import os
+import secrets
 
-from flask import Flask, render_template, request, send_file, jsonify
+from flask import Flask, abort, jsonify, render_template, request, send_file
+from flask_wtf import CSRFProtect
+from flask_wtf.csrf import CSRFError
+
 from utils.logger import AppLogger
 from utils.qr_generator import QRCodeGenerator
-
+from utils.result_store import ResultStore
 
 AppLogger.configure_logger()
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') or secrets.token_hex(32)
+app.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024  # 5 MB image + multipart headroom
+csrf = CSRFProtect(app)
+store = ResultStore()
 
 
-def before_request_index():
-    file_names = ('qr', 'qr_with_image')
-    current_dir = os.listdir()
+@app.errorhandler(413)
+def request_too_large(e):
+    return jsonify({'success': False, 'errors': ['File is too large. Maximum request size is 6 MB.']}), 413
 
-    for filename in current_dir:
-        for name in file_names:
-            if filename.startswith(name):
-                try:
-                    os.remove(filename)
-                except Exception as e:
-                    AppLogger.logger.error(f"Error removing file {filename}: {e}")
+
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return jsonify({'success': False, 'errors': ['Security token missing or expired. Please reload the page.']}), 400
 
 
 @app.route('/')
 def index():
-    before_request_index()
     return render_template('index.html')
 
 
 @app.route('/generate', methods=['POST'])
 def generate():
-    text = request.form['text']
-    size = int(request.form['size'])
-    image = request.files['image'] if 'image' in request.files else None
-    color = request.form['color'] if 'color' in request.form else None
+    text = request.form.get('text', '')
+    try:
+        size = int(request.form.get('size', ''))
+    except TypeError, ValueError:
+        return jsonify({'success': False, 'errors': ['Size must be a valid integer.']}), 400
+    raw_image = request.files.get('image')
+    image = raw_image if (raw_image and raw_image.filename) else None
+    color = request.form.get('color') or None
+    bg_color = request.form.get('bg_color') or '#ffffff'
+    micro = request.form.get('micro') == 'on'
 
     generator = QRCodeGenerator()
-    success, errors = generator.generate_qr(text, size, image, color)
+    success, errors = generator.generate_qr(text, size, image, color, bg_color, micro)
 
-    if success:
-        return jsonify({'success': True})
-    else:
+    if not success:
         return jsonify({'success': False, 'errors': errors})
+
+    token = store.put(
+        {
+            'qr': generator.qr_png,
+            'artistic': generator.artistic_png,
+            'artistic_ext': generator.artistic_ext,
+        }
+    )
+    return jsonify({'success': True, 'id': token})
 
 
 @app.route('/result')
 def result():
-    qr_with_image_exists = any(filename.startswith('qr_with_image') for filename in os.listdir('.'))
-    return render_template('result.html', qr_with_image_exists=qr_with_image_exists)
+    token = request.args.get('id', '')
+    payload = store.get(token)
+    if payload is None:
+        abort(404)
+    return render_template(
+        'result.html',
+        token=token,
+        qr_with_image_exists=payload['artistic'] is not None,
+    )
 
 
 @app.route('/download')
 def download():
-    return send_file('qr.png', as_attachment=True)
+    token = request.args.get('id', '')
+    payload = store.get(token)
+    if payload is None:
+        abort(404)
+    return send_file(
+        io.BytesIO(payload['qr']),
+        mimetype='image/png',
+        as_attachment=False,
+        download_name='qr.png',
+    )
 
 
 @app.route('/download_with_image')
 def download_with_image():
-    for filename in os.listdir('.'):
-        if filename.startswith('qr_with_image'):
-            return send_file(filename, as_attachment=True)
-
-    return "File not found", 404
+    token = request.args.get('id', '')
+    payload = store.get(token)
+    if payload is None or payload['artistic'] is None:
+        abort(404)
+    ext = payload['artistic_ext']
+    mimetype = 'image/gif' if ext == 'gif' else 'image/png'
+    return send_file(
+        io.BytesIO(payload['artistic']),
+        mimetype=mimetype,
+        as_attachment=False,
+        download_name=f'qr_with_image.{ext}',
+    )
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    debug = os.getenv('FLASK_DEBUG', 'false').lower() == 'true'
+    app.run(debug=debug, host='0.0.0.0', port=5000)

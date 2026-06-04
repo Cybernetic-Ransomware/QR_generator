@@ -1,1 +1,11 @@
 *.tar
+.venv/
+__pycache__/
+*.pyc
+.idea/
+*.log
+.git/
+.ruff_cache/
+.ty_cache/
+.pytest_cache/
+tests/result/
