@@ -81,7 +81,7 @@ def download():
     return send_file(
         io.BytesIO(payload['qr']),
         mimetype='image/png',
-        as_attachment=True,
+        as_attachment=False,
         download_name='qr.png',
     )
 
@@ -97,7 +97,7 @@ def download_with_image():
     return send_file(
         io.BytesIO(payload['artistic']),
         mimetype=mimetype,
-        as_attachment=True,
+        as_attachment=False,
         download_name=f'qr_with_image.{ext}',
     )
 

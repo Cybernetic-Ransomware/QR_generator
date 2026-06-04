@@ -18,7 +18,7 @@ spec:
       containers:
         - name: qrgen
           image: qr_generator-web:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
               protocol: TCP

@@ -3,3 +3,8 @@
 
 image.tar
 *.png
+
+app.log
+__pycache__/
+*.pyc
+.venv/
