@@ -11,6 +11,12 @@
 </head>
 
 <body>
+    <nav class="navbar bg-body-tertiary border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="/">QR Code Generator</a>
+        </div>
+    </nav>
+
     <div class="container">
     <div class="row justify-content-center">
     <div class="col-lg-6">
@@ -38,14 +44,14 @@
             </div>
         </div>
 
-        <div class="row g-3 mb-3">
-            <div class="col">
+        <div class="d-flex gap-4 mb-3">
+            <div>
                 <label for="color" class="form-label">Foreground color:</label>
-                <input type="color" id="color" name="color" class="form-control form-control-color w-100">
+                <input type="color" id="color" name="color" class="form-control form-control-color">
             </div>
-            <div class="col">
+            <div>
                 <label for="bg_color" class="form-label">Background color:</label>
-                <input type="color" id="bg_color" name="bg_color" value="#ffffff" class="form-control form-control-color w-100">
+                <input type="color" id="bg_color" name="bg_color" value="#ffffff" class="form-control form-control-color">
             </div>
         </div>
 

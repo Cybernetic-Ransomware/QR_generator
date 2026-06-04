@@ -10,20 +10,30 @@
           crossorigin="anonymous">
 </head>
 <body>
+    <nav class="navbar bg-body-tertiary border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="/">QR Code Generator</a>
+        </div>
+    </nav>
+
     <div class="container">
     <div class="row justify-content-center">
     <div class="col-lg-6">
 
     <h1 class="my-4">QR Code Generated</h1>
     <img src="{{ url_for('download', id=token) }}" alt="QR Code" class="img-fluid d-block mb-2">
-    <a href="{{ url_for('download', id=token) }}" download class="btn btn-primary mb-4 d-inline-block">Download QR Code without Image</a>
 
     {% if qr_with_image_exists %}
     <img src="{{ url_for('download_with_image', id=token) }}" alt="QR Code with background" class="img-fluid d-block mb-2">
-    <a href="{{ url_for('download_with_image', id=token) }}" download class="btn btn-primary mb-4 d-inline-block">Download QR Code with Image</a>
     {% endif %}
 
-    <a href="/" class="btn btn-outline-secondary">← Home</a>
+    <div class="d-flex flex-column gap-2 mt-3">
+        <a href="{{ url_for('download', id=token) }}" download class="btn btn-primary">Download QR Code without Image</a>
+        {% if qr_with_image_exists %}
+        <a href="{{ url_for('download_with_image', id=token) }}" download class="btn btn-primary">Download QR Code with Image</a>
+        {% endif %}
+        <a href="/" class="btn btn-outline-secondary">← Home</a>
+    </div>
 
     </div>
     </div>
