@@ -18,12 +18,16 @@ class QRCodeGenerator(NotificationMixin):
         size: int,
         image: FileStorage | None,
         color: str | None = None,
+        micro: bool = False,
     ) -> tuple[bool, list[str]]:
         valid, errors = self.validate_data(text, size, image)
         if not valid:
             return False, errors
 
-        qr = segno.make(text)
+        try:
+            qr = segno.make(text, micro=True) if micro else segno.make_qr(text)
+        except Exception:
+            return False, ['Text is too long for a Micro QR code.']
 
         buf = io.BytesIO()
         if color:

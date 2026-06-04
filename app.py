@@ -44,9 +44,10 @@ def generate():
     raw_image = request.files.get('image')
     image = raw_image if (raw_image and raw_image.filename) else None
     color = request.form.get('color') or None
+    micro = request.form.get('micro') == 'on'
 
     generator = QRCodeGenerator()
-    success, errors = generator.generate_qr(text, size, image, color)
+    success, errors = generator.generate_qr(text, size, image, color, micro)
 
     if not success:
         return jsonify({'success': False, 'errors': errors})
