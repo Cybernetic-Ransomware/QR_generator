@@ -18,6 +18,7 @@ class QRCodeGenerator(NotificationMixin):
         size: int,
         image: FileStorage | None,
         color: str | None = None,
+        bg_color: str = '#ffffff',
         micro: bool = False,
     ) -> tuple[bool, list[str]]:
         valid, errors = self.validate_data(text, size, image)
@@ -30,10 +31,7 @@ class QRCodeGenerator(NotificationMixin):
             return False, ['Text is too long for a Micro QR code.']
 
         buf = io.BytesIO()
-        if color:
-            qr.save(buf, kind='png', scale=size, dark=color, light='white')
-        else:
-            qr.save(buf, kind='png', scale=size)
+        qr.save(buf, kind='png', scale=size, dark=color or 'black', light=bg_color)
         buf.seek(0)
         self.qr_png = buf.read()
 
@@ -41,7 +39,7 @@ class QRCodeGenerator(NotificationMixin):
             ext = 'gif' if image.filename.rsplit('.', 1)[-1].lower() == 'gif' else 'png'
             image.seek(0)
             art_buf = io.BytesIO()
-            qr.to_artistic(background=image, target=art_buf, kind=ext, scale=size)
+            qr.to_artistic(background=image, target=art_buf, kind=ext, scale=size, dark=color or 'black', light=bg_color)
             art_buf.seek(0)
             self.artistic_png = art_buf.read()
             self.artistic_ext = ext

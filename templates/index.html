@@ -30,14 +30,26 @@
         </div>
 
         <div class="mb-3">
-            <label for="image" class="form-label">Image:</label>
+            <label for="image" class="form-label">Background image:</label>
             <input type="file" id="image" name="image" class="form-control">
             <input type="button" class="btn btn-secondary btn-sm mt-2" value="Remove file" onclick="clearFileInput()">
+            <div id="image-warning" class="alert alert-info mt-2 mb-0 py-2 d-none">
+                QR readability depends on image complexity — make sure the three corner squares remain clearly visible.
+            </div>
         </div>
 
         <div class="mb-3">
-            <label for="color" class="form-label">Color (RGB):</label>
+            <label for="color" class="form-label">Foreground color:</label>
             <input type="color" id="color" name="color" class="form-control form-control-color">
+        </div>
+
+        <div class="mb-3">
+            <label for="bg_color" class="form-label">Background color:</label>
+            <input type="color" id="bg_color" name="bg_color" value="#ffffff" class="form-control form-control-color">
+        </div>
+
+        <div id="contrast-warning" class="alert alert-warning py-2 d-none">
+            Low contrast between foreground and background colors may make the QR code unreadable.
         </div>
 
         <div class="mb-3 form-check form-switch">
@@ -70,6 +82,7 @@
 
     <script src="{{ url_for('static', filename='js/input_errors_modal.js') }}"></script>
     <script src="{{ url_for('static', filename='js/form_remove_image.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/color_contrast_warning.js') }}"></script>
 
     </div>
     </div>

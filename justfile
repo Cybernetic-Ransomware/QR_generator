@@ -11,8 +11,9 @@ help:
 install:
     uv sync
 
-# Run all linters (ruff check, ty, codespell, bandit)
+# Run all linters (ruff format --check, ruff check, ty, codespell, bandit)
 lint:
+    uv run ruff format --check .
     uv run ruff check .
     uv run ty check
     uv run codespell
