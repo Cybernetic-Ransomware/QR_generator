@@ -8,7 +8,8 @@ services:
       - traefik.enable=true
       - traefik.docker.network=proxy
       - traefik.http.routers.qr.rule=Host(`qrcode.home`)
-      - traefik.http.routers.qr.entrypoints=web
+      - traefik.http.routers.qr.entrypoints=websecure
+      - traefik.http.routers.qr.tls=true
       - traefik.http.services.qr.loadbalancer.server.port=5000
 networks:
   proxy:
